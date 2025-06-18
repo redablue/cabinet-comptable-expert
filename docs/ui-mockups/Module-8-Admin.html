@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration Système - Cabinet Comptable Expert</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2c5aa0;
+            --secondary-color: #f8f9fa;
+            --accent-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --dark-color: #343a40;
+            --light-color: #ffffff;
+            --border-color: #dee2e6;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --shadow-hover: 0 5px 20px rgba(0,0,0,0.15);
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark-color);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-hover);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--gradient);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        /* KPIs Système */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .kpi-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .kpi-trend {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        /* Status système */
+        .system-status {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .status-header {
+            background: var(--gradient);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .status-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .status-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .status-icon.online {
+            background: var(--accent-color);
+        }
+
+        .status-icon.warning {
+            background: var(--warning-color);
+        }
+
+        .status-icon.offline {
+            background: var(--danger-color);
+        }
+
+        .status-info {
+            flex: 1;
+        }
+
+        .status-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .status-description {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .status-value {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Modules */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .module-header {
+            background: var(--gradient);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .module-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .module-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .module-subtitle {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .module-content {
+            padding: 1.5rem;
+        }
+
+        .module-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .module-features li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .module-features li i {
+            color: var(--accent-color);
+            width: 16px;
+        }
+
+        .module-stats {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Gestion utilisateurs */
+        .users-management {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .users-header {
+            background: var(--gradient);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .users-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-outline-white {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-success {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: #333;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .users-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .users-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .user-email {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .role-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .role-admin {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .role-comptable {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .role-assistant {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* Actions rapides */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quick-action {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+
+        .quick-action:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            color: var(--primary-color);
+        }
+
+        .action-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .action-text {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* Logs système */
+        .system-logs {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .logs-header {
+            background: var(--gradient);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .logs-content {
+            padding: 1.5rem;
+            background: #1e1e1e;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin-bottom: 0.5rem;
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .log-timestamp {
+            color: #888;
+        }
+
+        .log-level-info {
+            color: #00ff41;
+        }
+
+        .log-level-warning {
+            color: #ffff00;
+        }
+
+        .log-level-error {
+            color: #ff4444;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .status-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-cog"></i> Administration Système</h1>
+            <p>Gestion utilisateurs - Sécurité - Monitoring - Configuration</p>
+        </div>
+
+        <div class="content">
+            <!-- KPIs Système -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--accent-color);">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--accent-color);">99.9%</div>
+                    <div class="kpi-label">Disponibilité Système</div>
+                    <div class="kpi-trend" style="color: var(--accent-color);">
+                        30 jours uptime
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--primary-color);">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--primary-color);">47</div>
+                    <div class="kpi-label">Utilisateurs Actifs</div>
+                    <div class="kpi-trend" style="color: var(--info-color);">
+                        +3 ce mois
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--info-color);">
+                        <i class="fas fa-hdd"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--info-color);">2.4 GB</div>
+                    <div class="kpi-label">Espace Utilisé</div>
+                    <div class="kpi-trend" style="color: var(--warning-color);">
+                        78% capacité
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--warning-color);">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--warning-color);">12</div>
+                    <div class="kpi-label">Alertes Sécurité</div>
+                    <div class="kpi-trend" style="color: var(--danger-color);">
+                        2 critiques
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--danger-color);">
+                        <i class="fas fa-backup"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--danger-color);">Daily</div>
+                    <div class="kpi-label">Dernière Sauvegarde</div>
+                    <div class="kpi-trend" style="color: var(--accent-color);">
+                        Succès - 03:15
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions rapides -->
+            <div class="quick-actions">
+                <a href="#" class="quick-action" onclick="addUser()">
+                    <div class="action-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="action-text">Nouvel Utilisateur</div>
+                </a>
+                <a href="#" class="quick-action" onclick="systemBackup()">
+                    <div class="action-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="action-text">Sauvegarde</div>
+                </a>
+                <a href="#" class="quick-action" onclick="securityAudit()">
+                    <div class="action-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="action-text">Audit Sécurité</div>
+                </a>
+                <a href="#" class="quick-action" onclick="systemSettings()">
+                    <div class="action-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <div class="action-text">Paramètres</div>
+                </a>
+            </div>
+
+            <!-- Status système -->
+            <div class="system-status">
+                <div class="status-header">
+                    <h3><i class="fas fa-heartbeat"></i> État du Système</h3>
+                </div>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <div class="status-icon online">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="status-info">
+                            <div class="status-title">Serveur Web</div>
+                            <div class="status-description">En ligne - <span class="status-value">99.9% uptime</span></div>
+                        </div>
+                    </div>
+
+                    <div class="status-item">
+                        <div class="status-icon online">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="status-info">
+                            <div class="status-title">Base de Données</div>
+                            <div class="status-description">Opérationnelle - <span class="status-value">2.4 GB utilisés</span></div>
+                        </div>
+                    </div>
+
+                    <div class="status-item">
+                        <div class="status-icon warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="status-info">
+                            <div class="status-title">Espace Disque</div>
+                            <div class="status-description">Attention - <span class="status-value">78% utilisé</span></div>
+                        </div>
+                    </div>
+
+                    <div class="status-item">
+                        <div class="status-icon online">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="status-info">
+                            <div class="status-title">Serveur Email</div>
+                            <div class="status-description">Fonctionnel - <span class="status-value">247 emails envoyés</span></div>
+                        </div>
+                    </div>
+
+                    <div class="status-item">
+                        <div class="status-icon online">
+                            <i class="fas fa-cloud"></i>
+                        </div>
+                        <div class="status-info">
+                            <div class="status-title">Sauvegarde Cloud</div>
+                            <div class="status-description">Synchronisée - <span class="status-value">Dernière: 03:15</span></div>
+                        </div>
+                    </div>
+
+                    <div class="status-item">
+                        <div class="status-icon online">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div class="status-info">
+                            <div class="status-title">Certificat SSL</div>
+                            <div class="status-description">Valide - <span class="status-value">Expire dans 89 jours</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sous-modules -->
+            <div class="modules-grid">
+                <!-- Module 8.1 - Gestion Utilisateurs -->
+                <div class="module-card" onclick="showModule('users')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-users-cog"></i>
+                        </div>
+                        <div class="module-title">8.1 Gestion Utilisateurs</div>
+                        <div class="module-subtitle">Droits & Permissions</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Création utilisateurs</li>
+                            <li><i class="fas fa-check"></i> Rôles et permissions</li>
+                            <li><i class="fas fa-check"></i> Authentification 2FA</li>
+                            <li><i class="fas fa-check"></i> Délégations de pouvoir</li>
+                            <li><i class="fas fa-check"></i> Audit connexions</li>
+                            <li><i class="fas fa-check"></i> Groupes utilisateurs</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Utilisateurs actifs:</span>
+                                <span class="stat-value">47</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Rôles définis:</span>
+                                <span class="stat-value">8</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>2FA activé:</span>
+                                <span class="stat-value">89%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 8.2 - Sécurité & Conformité -->
+                <div class="module-card" onclick="showModule('security')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="module-title">8.2 Sécurité & Conformité</div>
+                        <div class="module-subtitle">RGPD & ISO 27001</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Audit sécurité</li>
+                            <li><i class="fas fa-check"></i> Conformité RGPD</li>
+                            <li><i class="fas fa-check"></i> Chiffrement données</li>
+                            <li><i class="fas fa-check"></i> Logs d'accès</li>
+                            <li><i class="fas fa-check"></i> Détection intrusions</li>
+                            <li><i class="fas fa-check"></i> Politique mots de passe</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Alertes sécurité:</span>
+                                <span class="stat-value">12</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Niveau sécurité:</span>
+                                <span class="stat-value">Élevé</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Conformité RGPD:</span>
+                                <span class="stat-value">100%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 8.3 - Configuration Système -->
+                <div class="module-card" onclick="showModule('config')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <div class="module-title">8.3 Configuration Système</div>
+                        <div class="module-subtitle">Paramétrage avancé</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Paramètres généraux</li>
+                            <li><i class="fas fa-check"></i> Configuration email</li>
+                            <li><i class="fas fa-check"></i> Templates personnalisés</li>
+                            <li><i class="fas fa-check"></i> Workflows métier</li>
+                            <li><i class="fas fa-check"></i> Intégrations API</li>
+                            <li><i class="fas fa-check"></i> Variables système</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Configurations:</span>
+                                <span class="stat-value">127</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Templates actifs:</span>
+                                <span class="stat-value">34</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Intégrations:</span>
+                                <span class="stat-value">8</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 8.4 - Monitoring & Logs -->
+                <div class="module-card" onclick="showModule('monitoring')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="module-title">8.4 Monitoring & Logs</div>
+                        <div class="module-subtitle">Surveillance temps réel</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Monitoring temps réel</li>
+                            <li><i class="fas fa-check"></i> Logs centralisés</li>
+                            <li><i class="fas fa-check"></i> Alertes automatiques</li>
+                            <li><i class="fas fa-check"></i> Métriques performance</li>
+                            <li><i class="fas fa-check"></i> Tableau de bord</li>
+                            <li><i class="fas fa-check"></i> Rapports d'activité</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Événements/jour:</span>
+                                <span class="stat-value">12,847</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Alertes actives:</span>
+                                <span class="stat-value">3</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Uptime:</span>
+                                <span class="stat-value">99.9%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gestion utilisateurs -->
+            <div class="users-management">
+                <div class="users-header">
+                    <div class="users-title">
+                        <i class="fas fa-users"></i> Gestion des Utilisateurs
+                    </div>
+                    <div>
+                        <button class="btn btn-success">
+                            <i class="fas fa-user-plus"></i> Nouvel Utilisateur
+                        </button>
+                        <button class="btn btn-outline-white">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Utilisateur</th>
+                            <th>Rôle</th>
+                            <th>Dernière Connexion</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">A</div>
+                                    <div class="user-details">
+                                        <div class="user-name">Admin Principal</div>
+                                        <div class="user-email">admin@cabinet.ma</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="role-badge role-admin">Admin</span></td>
+                            <td>Il y a 5 minutes</td>
+                            <td><span class="status-badge status-active">Actif</span></td>
+                            <td>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-warning btn-sm">
+                                    <i class="fas fa-key"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">S</div>
+                                    <div class="user-details">
+                                        <div class="user-name">Sarah Bennani</div>
+                                        <div class="user-email">s.bennani@cabinet.ma</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="role-badge role-comptable">Comptable</span></td>
+                            <td>Il y a 2 heures</td>
+                            <td><span class="status-badge status-active">Actif</span></td>
+                            <td>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-warning btn-sm">
+                                    <i class="fas fa-key"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">M</div>
+                                    <div class="user-details">
+                                        <div class="user-name">Mohammed Alami</div>
+                                        <div class="user-email">m.alami@cabinet.ma</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="role-badge role-assistant">Assistant</span></td>
+                            <td>Hier à 18:30</td>
+                            <td><span class="status-badge status-active">Actif</span></td>
+                            <td>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-warning btn-sm">
+                                    <i class="fas fa-key"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">F</div>
+                                    <div class="user-details">
+                                        <div class="user-name">Fatima El Mansouri</div>
+                                        <div class="user-email">f.elmansouri@cabinet.ma</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="role-badge role-comptable">Expert</span></td>
+                            <td>Il y a 30 minutes</td>
+                            <td><span class="status-badge status-active">Actif</span></td>
+                            <td>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-warning btn-sm">
+                                    <i class="fas fa-key"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Logs système -->
+            <div class="system-logs">
+                <div class="logs-header">
+                    <h3><i class="fas fa-terminal"></i> Logs Système (Temps Réel)</h3>
+                </div>
+                <div class="logs-content" id="systemLogs">
+                    <div class="log-entry">
+                        <span class="log-timestamp">[2024-03-25 14:23:15]</span>
+                        <span class="log-level-info">[INFO]</span>
+                        Utilisateur 'admin' connecté depuis 192.168.1.100
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-timestamp">[2024-03-25 14:20:33]</span>
+                        <span class="log-level-info">[INFO]</span>
+                        Sauvegarde automatique terminée avec succès (2.4 GB)
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-timestamp">[2024-03-25 14:15:42]</span>
+                        <span class="log-level-warning">[WARN]</span>
+                        Espace disque faible - 78% utilisé
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-timestamp">[2024-03-25 14:12:18]</span>
+                        <span class="log-level-info">[INFO]</span>
+                        Rapport 'CA Mensuel' généré par s.bennani
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-timestamp">[2024-03-25 14:08:55]</span>
+                        <span class="log-level-error">[ERROR]</span>
+                        Tentative connexion échouée pour utilisateur 'test'
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-timestamp">[2024-03-25 14:05:12]</span>
+                        <span class="log-level-info">[INFO]</span>
+                        Email envoyé: Facture F-2024-0156 à atlas@trading.ma
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showModule(moduleType) {
+            const moduleMap = {
+                'users': '8.1 Gestion Utilisateurs',
+                'security': '8.2 Sécurité & Conformité',
+                'config': '8.3 Configuration Système',
+                'monitoring': '8.4 Monitoring & Logs'
+            };
+            
+            alert(`Ouverture du module: ${moduleMap[moduleType]}\n\nFonctionnalité à implémenter selon les spécifications détaillées.`);
+        }
+
+        function addUser() {
+            alert('Création nouvel utilisateur\n\n• Informations personnelles\n• Rôle et permissions\n• Configuration 2FA\n• Email de bienvenue');
+        }
+
+        function systemBackup() {
+            alert('Sauvegarde système\n\n• Sauvegarde complète\n• Données + configuration\n• Stockage cloud\n• Notification fin');
+        }
+
+        function securityAudit() {
+            alert('Audit de sécurité\n\n• Scan vulnérabilités\n• Vérification permissions\n• Logs suspects\n• Rapport détaillé');
+        }
+
+        function systemSettings() {
+            alert('Paramètres système\n\n• Configuration générale\n• Intégrations\n• Templates\n• Variables environnement');
+        }
+
+        // Animation des cartes KPI
+        document.querySelectorAll('.kpi-card').forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.6s ease';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100);
+            }, index * 100);
+        });
+
+        // Simulation logs temps réel
+        function addLogEntry() {
+            const logsContainer = document.getElementById('systemLogs');
+            const timestamp = new Date().toLocaleString('fr-FR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            const logTypes = [
+                { level: 'info', class: 'log-level-info', message: 'Tâche automatique exécutée avec succès' },
+                { level: 'info', class: 'log-level-info', message: 'Nouvelle facture créée par utilisateur' },
+                { level: 'warning', class: 'log-level-warning', message: 'Tentative accès ressource non autorisée' },
+                { level: 'info', class: 'log-level-info', message: 'Rapport généré et envoyé par email' },
+                { level: 'error', class: 'log-level-error', message: 'Erreur connexion base données (récupérée)' },
+                { level: 'info', class: 'log-level-info', message: 'Utilisateur déconnecté proprement' }
+            ];
+            
+            const randomLog = logTypes[Math.floor(Math.random() * logTypes.length)];
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+                <span class="log-timestamp">[${timestamp}]</span>
+                <span class="${randomLog.class}">[${randomLog.level.toUpperCase()}]</span>
+                ${randomLog.message}
+            `;
+            
+            logsContainer.insertBefore(logEntry, logsContainer.firstChild);
+            
+            // Garder seulement les 10 dernières entrées
+            while (logsContainer.children.length > 10) {
+                logsContainer.removeChild(logsContainer.lastChild);
+            }
+        }
+
+        // Ajouter une nouvelle entrée de log toutes les 10 secondes
+        setInterval(addLogEntry, 10000);
+
+        // Simulation mise à jour temps réel des métriques
+        setInterval(() => {
+            const uptimeCard = document.querySelector('.kpi-value');
+            if (uptimeCard && Math.random() > 0.95) {
+                uptimeCard.style.color = 'var(--accent-color)';
+                uptimeCard.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    uptimeCard.style.color = '';
+                    uptimeCard.style.transform = 'scale(1)';
+                }, 1000);
+            }
+        }, 5000);
+
+        // Animation des status icons
+        document.querySelectorAll('.status-icon.online').forEach(icon => {
+            setInterval(() => {
+                icon.style.animation = 'pulse 1s ease-in-out';
+                setTimeout(() => {
+                    icon.style.animation = '';
+                }, 1000);
+            }, 5000);
+        });
+
+        // Style pour l'animation pulse
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(0,255,0,0.3); }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
