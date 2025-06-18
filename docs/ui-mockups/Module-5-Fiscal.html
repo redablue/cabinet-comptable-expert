@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion Fiscale Maroc - Cabinet Comptable Expert</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2c5aa0;
+            --secondary-color: #f8f9fa;
+            --accent-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --dark-color: #343a40;
+            --light-color: #ffffff;
+            --border-color: #dee2e6;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --shadow-hover: 0 5px 20px rgba(0,0,0,0.15);
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            --morocco-red: #c1272d;
+            --morocco-green: #006233;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark-color);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-hover);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--morocco-red), var(--morocco-green));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        /* KPIs Fiscal */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .kpi-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .kpi-trend {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        /* Calendrier fiscal */
+        .fiscal-calendar {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .calendar-header {
+            background: var(--gradient);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .calendar-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-outline-white {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .calendar-grid {
+            padding: 2rem;
+        }
+
+        .calendar-month {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .calendar-day {
+            background: white;
+            padding: 1rem;
+            min-height: 80px;
+            position: relative;
+        }
+
+        .calendar-day.other-month {
+            background: #f8f9fa;
+            color: #999;
+        }
+
+        .calendar-day.today {
+            background: #e8f4f8;
+            border: 2px solid var(--primary-color);
+        }
+
+        .day-number {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .fiscal-event {
+            background: var(--danger-color);
+            color: white;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-bottom: 0.2rem;
+            cursor: pointer;
+        }
+
+        .fiscal-event.tva {
+            background: var(--warning-color);
+            color: #333;
+        }
+
+        .fiscal-event.is {
+            background: var(--info-color);
+        }
+
+        .fiscal-event.social {
+            background: var(--accent-color);
+        }
+
+        /* Modules */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .module-header {
+            background: var(--gradient);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .module-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .module-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .module-subtitle {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .module-content {
+            padding: 1.5rem;
+        }
+
+        .module-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .module-features li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .module-features li i {
+            color: var(--accent-color);
+            width: 16px;
+        }
+
+        .module-stats {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Déclarations en attente */
+        .pending-declarations {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .declarations-header {
+            background: var(--gradient);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .declarations-list {
+            padding: 1.5rem;
+        }
+
+        .declaration-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.3s ease;
+        }
+
+        .declaration-item:hover {
+            background: #f8f9fa;
+        }
+
+        .declaration-item:last-child {
+            border-bottom: none;
+        }
+
+        .declaration-info {
+            flex: 1;
+        }
+
+        .declaration-title {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .declaration-client {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .declaration-meta {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .declaration-date {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .declaration-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-urgent {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-normal {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-draft {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        /* Actions rapides */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quick-action {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+
+        .quick-action:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            color: var(--primary-color);
+        }
+
+        .action-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .action-text {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .calendar-month {
+                grid-template-columns: repeat(7, 1fr);
+                font-size: 0.8rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-landmark"></i> Gestion Fiscale Maroc</h1>
+            <p>Conformité DGI - Calendrier fiscal automatisé - Déclarations intelligentes</p>
+        </div>
+
+        <div class="content">
+            <!-- KPIs Fiscal -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--morocco-red);">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--morocco-red);">48</div>
+                    <div class="kpi-label">Déclarations à Traiter</div>
+                    <div class="kpi-trend" style="color: var(--warning-color);">
+                        12 urgentes
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--morocco-green);">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--morocco-green);">156</div>
+                    <div class="kpi-label">Déclarations Déposées</div>
+                    <div class="kpi-trend" style="color: var(--accent-color);">
+                        100% dans les délais
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--warning-color);">
+                        <i class="fas fa-euro-sign"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--warning-color);">2.8M</div>
+                    <div class="kpi-label">Impôts Calculés (MAD)</div>
+                    <div class="kpi-trend" style="color: var(--info-color);">
+                        TVA + IS + IR
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--danger-color);">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--danger-color);">3</div>
+                    <div class="kpi-label">Échéances Critiques</div>
+                    <div class="kpi-trend" style="color: var(--danger-color);">
+                        < 7 jours
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--info-color);">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--info-color);">89%</div>
+                    <div class="kpi-label">Automatisation</div>
+                    <div class="kpi-trend" style="color: var(--accent-color);">
+                        Gain de temps
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions rapides -->
+            <div class="quick-actions">
+                <a href="#" class="quick-action" onclick="newDeclaration()">
+                    <div class="action-icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <div class="action-text">Nouvelle Déclaration</div>
+                </a>
+                <a href="#" class="quick-action" onclick="tvaCalculator()">
+                    <div class="action-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <div class="action-text">Calculateur TVA</div>
+                </a>
+                <a href="#" class="quick-action" onclick="fiscalReminders()">
+                    <div class="action-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="action-text">Rappels Fiscaux</div>
+                </a>
+                <a href="#" class="quick-action" onclick="dgiPortal()">
+                    <div class="action-icon">
+                        <i class="fas fa-external-link-alt"></i>
+                    </div>
+                    <div class="action-text">Portail DGI</div>
+                </a>
+            </div>
+
+            <!-- Sous-modules -->
+            <div class="modules-grid">
+                <!-- Module 5.1 - Calendrier Fiscal DGI -->
+                <div class="module-card" onclick="showModule('calendrier')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="module-title">5.1 Calendrier Fiscal DGI</div>
+                        <div class="module-subtitle">Conformité automatisée</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Calendrier officiel DGI</li>
+                            <li><i class="fas fa-check"></i> Mises à jour automatiques</li>
+                            <li><i class="fas fa-check"></i> Alertes proactives</li>
+                            <li><i class="fas fa-check"></i> Planification intelligente</li>
+                            <li><i class="fas fa-check"></i> Gestion jours fériés</li>
+                            <li><i class="fas fa-check"></i> Multi-entreprises</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Obligations suivies:</span>
+                                <span class="stat-value">127</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Rappels envoyés:</span>
+                                <span class="stat-value">245</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Taux respect:</span>
+                                <span class="stat-value">100%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 5.2 - Déclarations TVA -->
+                <div class="module-card" onclick="showModule('tva')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <div class="module-title">5.2 Déclarations TVA</div>
+                        <div class="module-subtitle">Automatisation complète</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Calcul automatique TVA</li>
+                            <li><i class="fas fa-check"></i> Régimes mensuel/trimestriel</li>
+                            <li><i class="fas fa-check"></i> Formulaire 8808 pré-rempli</li>
+                            <li><i class="fas fa-check"></i> Télédéclaration DGI</li>
+                            <li><i class="fas fa-check"></i> Gestion crédit TVA</li>
+                            <li><i class="fas fa-check"></i> Contrôles de cohérence</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Déclarations TVA:</span>
+                                <span class="stat-value">89</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>TVA collectée:</span>
+                                <span class="stat-value">1.2M MAD</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Automatisation:</span>
+                                <span class="stat-value">95%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 5.3 - Impôts sur Sociétés -->
+                <div class="module-card" onclick="showModule('is')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="module-title">5.3 Impôt sur les Sociétés</div>
+                        <div class="module-subtitle">Liasse fiscale IA</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Liasse fiscale automatique</li>
+                            <li><i class="fas fa-check"></i> Acomptes trimestriels</li>
+                            <li><i class="fas fa-check"></i> Optimisation fiscale IA</li>
+                            <li><i class="fas fa-check"></i> Simulations impact</li>
+                            <li><i class="fas fa-check"></i> Régimes spéciaux</li>
+                            <li><i class="fas fa-check"></i> Consolidation groupe</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Sociétés gérées:</span>
+                                <span class="stat-value">67</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>IS économisé:</span>
+                                <span class="stat-value">450K MAD</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Temps gagné:</span>
+                                <span class="stat-value">76%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 5.4 - Obligations Sociales -->
+                <div class="module-card" onclick="showModule('social')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="module-title">5.4 Obligations Sociales</div>
+                        <div class="module-subtitle">CNSS & AMO</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Déclarations CNSS auto</li>
+                            <li><i class="fas fa-check"></i> Bordereau CNSS</li>
+                            <li><i class="fas fa-check"></i> Gestion AMO</li>
+                            <li><i class="fas fa-check"></i> Formation professionnelle</li>
+                            <li><i class="fas fa-check"></i> Contrôles CNSS</li>
+                            <li><i class="fas fa-check"></i> Regularisations auto</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Employeurs:</span>
+                                <span class="stat-value">45</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Salariés gérés:</span>
+                                <span class="stat-value">1,247</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Cotisations:</span>
+                                <span class="stat-value">2.1M MAD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendrier fiscal -->
+            <div class="fiscal-calendar">
+                <div class="calendar-header">
+                    <div class="calendar-title">
+                        <i class="fas fa-calendar"></i> Calendrier Fiscal - Avril 2024
+                    </div>
+                    <div class="calendar-nav">
+                        <button class="btn btn-outline-white">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="btn btn-outline-white">
+                            Aujourd'hui
+                        </button>
+                        <button class="btn btn-outline-white">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-month">
+                        <!-- Jours de la semaine -->
+                        <div class="calendar-day" style="background: #e9ecef; font-weight: bold; text-align: center;">Lun</div>
+                        <div class="calendar-day" style="background: #e9ecef; font-weight: bold; text-align: center;">Mar</div>
+                        <div class="calendar-day" style="background: #e9ecef; font-weight: bold; text-align: center;">Mer</div>
+                        <div class="calendar-day" style="background: #e9ecef; font-weight: bold; text-align: center;">Jeu</div>
+                        <div class="calendar-day" style="background: #e9ecef; font-weight: bold; text-align: center;">Ven</div>
+                        <div class="calendar-day" style="background: #e9ecef; font-weight: bold; text-align: center;">Sam</div>
+                        <div class="calendar-day" style="background: #e9ecef; font-weight: bold; text-align: center;">Dim</div>
+                        
+                        <!-- Semaine 1 -->
+                        <div class="calendar-day">
+                            <div class="day-number">1</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">2</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">3</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">4</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">5</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">6</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">7</div>
+                        </div>
+                        
+                        <!-- Semaine 2 -->
+                        <div class="calendar-day">
+                            <div class="day-number">8</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">9</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">10</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">11</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">12</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">13</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">14</div>
+                        </div>
+                        
+                        <!-- Semaine 3 -->
+                        <div class="calendar-day">
+                            <div class="day-number">15</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">16</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">17</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">18</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">19</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">20</div>
+                            <div class="fiscal-event tva">TVA Mars</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">21</div>
+                        </div>
+                        
+                        <!-- Semaine 4 -->
+                        <div class="calendar-day">
+                            <div class="day-number">22</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">23</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">24</div>
+                        </div>
+                        <div class="calendar-day today">
+                            <div class="day-number">25</div>
+                            <div class="fiscal-event is">IS T1</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">26</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">27</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">28</div>
+                        </div>
+                        
+                        <!-- Semaine 5 -->
+                        <div class="calendar-day">
+                            <div class="day-number">29</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-number">30</div>
+                            <div class="fiscal-event social">CNSS</div>
+                        </div>
+                        <div class="calendar-day other-month">
+                            <div class="day-number">1</div>
+                        </div>
+                        <div class="calendar-day other-month">
+                            <div class="day-number">2</div>
+                        </div>
+                        <div class="calendar-day other-month">
+                            <div class="day-number">3</div>
+                        </div>
+                        <div class="calendar-day other-month">
+                            <div class="day-number">4</div>
+                        </div>
+                        <div class="calendar-day other-month">
+                            <div class="day-number">5</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Déclarations en attente -->
+            <div class="pending-declarations">
+                <div class="declarations-header">
+                    <h3><i class="fas fa-clock"></i> Déclarations en Attente</h3>
+                </div>
+                <div class="declarations-list">
+                    <div class="declaration-item">
+                        <div class="declaration-info">
+                            <div class="declaration-title">Déclaration TVA Mars 2024</div>
+                            <div class="declaration-client">ATLAS TRADING SARL - ICE: 001234567890123</div>
+                        </div>
+                        <div class="declaration-meta">
+                            <div class="declaration-date">Échéance: 20/04/2024</div>
+                            <div class="declaration-status status-urgent">Urgent</div>
+                        </div>
+                    </div>
+                    <div class="declaration-item">
+                        <div class="declaration-info">
+                            <div class="declaration-title">Acompte IS T1 2024</div>
+                            <div class="declaration-client">GREEN ENERGY MOROCCO - ICE: 001234567890127</div>
+                        </div>
+                        <div class="declaration-meta">
+                            <div class="declaration-date">Échéance: 31/03/2024</div>
+                            <div class="declaration-status status-urgent">Urgent</div>
+                        </div>
+                    </div>
+                    <div class="declaration-item">
+                        <div class="declaration-info">
+                            <div class="declaration-title">Bordereau CNSS Mars 2024</div>
+                            <div class="declaration-client">MEDINA TECH SARL - CNSS: 12345678</div>
+                        </div>
+                        <div class="declaration-meta">
+                            <div class="declaration-date">Échéance: 30/04/2024</div>
+                            <div class="declaration-status status-normal">Normal</div>
+                        </div>
+                    </div>
+                    <div class="declaration-item">
+                        <div class="declaration-info">
+                            <div class="declaration-title">IR Retenu à la Source</div>
+                            <div class="declaration-client">RIAD CONSULTING - IF: 98765432</div>
+                        </div>
+                        <div class="declaration-meta">
+                            <div class="declaration-date">Échéance: 20/04/2024</div>
+                            <div class="declaration-status status-draft">Brouillon</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showModule(moduleType) {
+            const moduleMap = {
+                'calendrier': '5.1 Calendrier Fiscal DGI',
+                'tva': '5.2 Déclarations TVA',
+                'is': '5.3 Impôt sur les Sociétés',
+                'social': '5.4 Obligations Sociales'
+            };
+            
+            alert(`Ouverture du module: ${moduleMap[moduleType]}\n\nFonctionnalité à implémenter selon les spécifications détaillées.`);
+        }
+
+        function newDeclaration() {
+            alert('Nouvelle déclaration fiscale\n\n• Sélection type déclaration\n• Client concerné\n• Période fiscale\n• Génération automatique');
+        }
+
+        function tvaCalculator() {
+            alert('Calculateur TVA intelligent\n\n• Import données comptables\n• Calcul automatique TVA\n• Contrôles de cohérence\n• Export vers déclaration');
+        }
+
+        function fiscalReminders() {
+            alert('Gestion rappels fiscaux\n\n• Calendrier personnalisé\n• Alertes automatiques\n• Suivi échéances\n• Notifications équipe');
+        }
+
+        function dgiPortal() {
+            alert('Intégration Portail DGI\n\n• Connexion sécurisée\n• Télédéclarations\n• Téléchargement accusés\n• Suivi dossiers');
+        }
+
+        // Animation événements calendrier
+        document.querySelectorAll('.fiscal-event').forEach(event => {
+            event.addEventListener('click', function() {
+                const eventType = this.classList.contains('tva') ? 'TVA' : 
+                                 this.classList.contains('is') ? 'IS' : 
+                                 this.classList.contains('social') ? 'Social' : 'Autre';
+                
+                alert(`Événement fiscal: ${eventType}\n\n• ${this.textContent}\n• Cliquez pour voir les détails\n• Gérer les déclarations associées`);
+            });
+        });
+
+        // Animation des cartes KPI
+        document.querySelectorAll('.kpi-card').forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.6s ease';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100);
+            }, index * 100);
+        });
+
+        // Mise à jour temps réel des échéances
+        setInterval(() => {
+            const urgentItems = document.querySelectorAll('.status-urgent');
+            urgentItems.forEach(item => {
+                item.style.animation = 'pulse 1s ease-in-out';
+                setTimeout(() => {
+                    item.style.animation = '';
+                }, 1000);
+            });
+        }, 5000);
+
+        // Animation pulse pour les éléments urgents
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
