@@ -405,3 +405,4 @@ docs/build/
 #    - Mots de passe et secrets
 #
 # 4. En cas de doute, mieux vaut exclure par sécurité
+install.sh
