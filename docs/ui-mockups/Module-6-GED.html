@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion Documentaire (GED) - Cabinet Comptable Expert</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2c5aa0;
+            --secondary-color: #f8f9fa;
+            --accent-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --dark-color: #343a40;
+            --light-color: #ffffff;
+            --border-color: #dee2e6;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --shadow-hover: 0 5px 20px rgba(0,0,0,0.15);
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark-color);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-hover);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--gradient);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        /* KPIs Documents */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .kpi-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .kpi-trend {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        /* Explorateur de fichiers */
+        .file-explorer {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .explorer-header {
+            background: var(--gradient);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .explorer-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .explorer-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-outline-white {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-success {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .explorer-content {
+            display: flex;
+            height: 600px;
+        }
+
+        .folder-tree {
+            width: 250px;
+            background: #f8f9fa;
+            border-right: 1px solid var(--border-color);
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .tree-item {
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tree-item:hover {
+            background: #e9ecef;
+        }
+
+        .tree-item.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .tree-item i {
+            width: 16px;
+        }
+
+        .file-list {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .file-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .file-item:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .file-item.selected {
+            border-color: var(--primary-color);
+            background: #e8f4f8;
+        }
+
+        .file-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.7;
+        }
+
+        .file-icon.pdf {
+            color: #dc3545;
+        }
+
+        .file-icon.excel {
+            color: #28a745;
+        }
+
+        .file-icon.word {
+            color: #0d6efd;
+        }
+
+        .file-icon.image {
+            color: #fd7e14;
+        }
+
+        .file-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .file-meta {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* Modules */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .module-header {
+            background: var(--gradient);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .module-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .module-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .module-subtitle {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .module-content {
+            padding: 1.5rem;
+        }
+
+        .module-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .module-features li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .module-features li i {
+            color: var(--accent-color);
+            width: 16px;
+        }
+
+        .module-stats {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Zone de drop */
+        .drop-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone.drag-over {
+            border-color: var(--primary-color);
+            background: #e8f4f8;
+        }
+
+        .drop-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            opacity: 0.7;
+        }
+
+        /* Actions rapides */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quick-action {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+
+        .quick-action:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            color: var(--primary-color);
+        }
+
+        .action-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .action-text {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* Recherche avancée */
+        .search-panel {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .form-input {
+            padding: 0.8rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .explorer-content {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .folder-tree {
+                width: 100%;
+                max-height: 200px;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-folder-open"></i> Gestion Documentaire (GED)</h1>
+            <p>Archivage numérique intelligent - OCR - Workflow de validation</p>
+        </div>
+
+        <div class="content">
+            <!-- KPIs Documents -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--primary-color);">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--primary-color);">12,847</div>
+                    <div class="kpi-label">Documents Archivés</div>
+                    <div class="kpi-trend" style="color: var(--accent-color);">
+                        +234 ce mois
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--info-color);">
+                        <i class="fas fa-hdd"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--info-color);">2.4 GB</div>
+                    <div class="kpi-label">Espace Utilisé</div>
+                    <div class="kpi-trend" style="color: var(--warning-color);">
+                        78% capacité
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--accent-color);">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--accent-color);">98%</div>
+                    <div class="kpi-label">Précision OCR</div>
+                    <div class="kpi-trend" style="color: var(--accent-color);">
+                        IA optimisée
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--warning-color);">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--warning-color);">1.2s</div>
+                    <div class="kpi-label">Temps Recherche</div>
+                    <div class="kpi-trend" style="color: var(--accent-color);">
+                        Index optimisé
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--danger-color);">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--danger-color);">256</div>
+                    <div class="kpi-label">Docs Chiffrés</div>
+                    <div class="kpi-trend" style="color: var(--info-color);">
+                        Sécurité max
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions rapides -->
+            <div class="quick-actions">
+                <a href="#" class="quick-action" onclick="uploadDocument()">
+                    <div class="action-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="action-text">Télécharger Document</div>
+                </a>
+                <a href="#" class="quick-action" onclick="scanDocument()">
+                    <div class="action-icon">
+                        <i class="fas fa-scanner"></i>
+                    </div>
+                    <div class="action-text">Scanner Document</div>
+                </a>
+                <a href="#" class="quick-action" onclick="ocrProcessing()">
+                    <div class="action-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="action-text">Traitement OCR</div>
+                </a>
+                <a href="#" class="quick-action" onclick="massImport()">
+                    <div class="action-icon">
+                        <i class="fas fa-file-import"></i>
+                    </div>
+                    <div class="action-text">Import en Masse</div>
+                </a>
+            </div>
+
+            <!-- Zone de drop -->
+            <div class="drop-zone" id="dropZone">
+                <div class="drop-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <h3>Glissez-déposez vos documents ici</h3>
+                <p>ou cliquez pour sélectionner des fichiers</p>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">
+                    Formats supportés: PDF, DOC, XLS, JPG, PNG (Max 10MB par fichier)
+                </p>
+            </div>
+
+            <!-- Sous-modules -->
+            <div class="modules-grid">
+                <!-- Module 6.1 - Archivage Numérique -->
+                <div class="module-card" onclick="showModule('archivage')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-archive"></i>
+                        </div>
+                        <div class="module-title">6.1 Archivage Numérique</div>
+                        <div class="module-subtitle">Dématérialisation IA</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Upload multi-formats</li>
+                            <li><i class="fas fa-check"></i> Classification automatique IA</li>
+                            <li><i class="fas fa-check"></i> Métadonnées intelligentes</li>
+                            <li><i class="fas fa-check"></i> Versioning avancé</li>
+                            <li><i class="fas fa-check"></i> Compression optimisée</li>
+                            <li><i class="fas fa-check"></i> Sauvegarde cloud</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Documents archivés:</span>
+                                <span class="stat-value">12,847</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Taux compression:</span>
+                                <span class="stat-value">73%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Classification auto:</span>
+                                <span class="stat-value">89%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 6.2 - OCR Intelligent -->
+                <div class="module-card" onclick="showModule('ocr')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="module-title">6.2 OCR Intelligent</div>
+                        <div class="module-subtitle">Reconnaissance IA</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> OCR multi-langues</li>
+                            <li><i class="fas fa-check"></i> Reconnaissance formulaires</li>
+                            <li><i class="fas fa-check"></i> Extraction données factures</li>
+                            <li><i class="fas fa-check"></i> Validation intelligente</li>
+                            <li><i class="fas fa-check"></i> Correction automatique</li>
+                            <li><i class="fas fa-check"></i> Export structuré</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Précision OCR:</span>
+                                <span class="stat-value">98.2%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Docs traités:</span>
+                                <span class="stat-value">8,456</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Temps moyen:</span>
+                                <span class="stat-value">12s</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 6.3 - Recherche Avancée -->
+                <div class="module-card" onclick="showModule('recherche')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-search-plus"></i>
+                        </div>
+                        <div class="module-title">6.3 Recherche Avancée</div>
+                        <div class="module-subtitle">Indexation complète</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Recherche full-text</li>
+                            <li><i class="fas fa-check"></i> Filtres multi-critères</li>
+                            <li><i class="fas fa-check"></i> Recherche sémantique IA</li>
+                            <li><i class="fas fa-check"></i> Suggestions intelligentes</li>
+                            <li><i class="fas fa-check"></i> Historique recherches</li>
+                            <li><i class="fas fa-check"></i> Recherche floue</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Index documents:</span>
+                                <span class="stat-value">12,847</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Temps recherche:</span>
+                                <span class="stat-value">1.2s</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Pertinence:</span>
+                                <span class="stat-value">94%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 6.4 - Workflow Validation -->
+                <div class="module-card" onclick="showModule('workflow')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-route"></i>
+                        </div>
+                        <div class="module-title">6.4 Workflow Validation</div>
+                        <div class="module-subtitle">Circuit approbation</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Circuit validation paramétrable</li>
+                            <li><i class="fas fa-check"></i> Signature électronique</li>
+                            <li><i class="fas fa-check"></i> Horodatage certifié</li>
+                            <li><i class="fas fa-check"></i> Notifications automatiques</li>
+                            <li><i class="fas fa-check"></i> Traçabilité complète</li>
+                            <li><i class="fas fa-check"></i> Délégations de pouvoir</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>En validation:</span>
+                                <span class="stat-value">24</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Validés ce mois:</span>
+                                <span class="stat-value">156</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Délai moyen:</span>
+                                <span class="stat-value">2.3j</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recherche avancée -->
+            <div class="search-panel">
+                <div class="search-title">
+                    <i class="fas fa-search"></i> Recherche Avancée
+                </div>
+                <div class="search-form">
+                    <div class="form-group">
+                        <label class="form-label">Texte libre</label>
+                        <input type="text" class="form-input" placeholder="Rechercher dans le contenu...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Client</label>
+                        <select class="form-input">
+                            <option>Tous les clients</option>
+                            <option>ATLAS TRADING SARL</option>
+                            <option>RIAD CONSULTING</option>
+                            <option>MEDINA TECH SARL</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Type de document</label>
+                        <select class="form-input">
+                            <option>Tous les types</option>
+                            <option>Factures</option>
+                            <option>Contrats</option>
+                            <option>Déclarations fiscales</option>
+                            <option>Pièces comptables</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date création</label>
+                        <input type="date" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Statut</label>
+                        <select class="form-input">
+                            <option>Tous les statuts</option>
+                            <option>Validé</option>
+                            <option>En attente</option>
+                            <option>Archivé</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Actions</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-success" style="flex: 1;">
+                                <i class="fas fa-search"></i> Rechercher
+                            </button>
+                            <button class="btn" style="background: #6c757d; color: white;">
+                                <i class="fas fa-eraser"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Explorateur de fichiers -->
+            <div class="file-explorer">
+                <div class="explorer-header">
+                    <div class="explorer-title">
+                        <i class="fas fa-folder-tree"></i> Explorateur Documentaire
+                    </div>
+                    <div class="explorer-actions">
+                        <button class="btn btn-outline-white">
+                            <i class="fas fa-th"></i> Vue grille
+                        </button>
+                        <button class="btn btn-outline-white">
+                            <i class="fas fa-list"></i> Vue liste
+                        </button>
+                        <button class="btn btn-success">
+                            <i class="fas fa-plus"></i> Nouveau dossier
+                        </button>
+                    </div>
+                </div>
+                <div class="explorer-content">
+                    <div class="folder-tree">
+                        <div class="tree-item active">
+                            <i class="fas fa-home"></i>
+                            <span>Racine</span>
+                        </div>
+                        <div class="tree-item">
+                            <i class="fas fa-folder"></i>
+                            <span>Clients</span>
+                        </div>
+                        <div class="tree-item" style="padding-left: 1.5rem;">
+                            <i class="fas fa-folder"></i>
+                            <span>ATLAS TRADING</span>
+                        </div>
+                        <div class="tree-item" style="padding-left: 2rem;">
+                            <i class="fas fa-folder"></i>
+                            <span>Comptabilité</span>
+                        </div>
+                        <div class="tree-item" style="padding-left: 2rem;">
+                            <i class="fas fa-folder"></i>
+                            <span>Fiscal</span>
+                        </div>
+                        <div class="tree-item" style="padding-left: 1.5rem;">
+                            <i class="fas fa-folder"></i>
+                            <span>RIAD CONSULTING</span>
+                        </div>
+                        <div class="tree-item">
+                            <i class="fas fa-folder"></i>
+                            <span>Templates</span>
+                        </div>
+                        <div class="tree-item">
+                            <i class="fas fa-folder"></i>
+                            <span>Archives</span>
+                        </div>
+                    </div>
+                    <div class="file-list">
+                        <div class="file-grid">
+                            <div class="file-item">
+                                <div class="file-icon pdf">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+                                <div class="file-name">Bilan_2023.pdf</div>
+                                <div class="file-meta">2.3 MB • 15/03/2024</div>
+                            </div>
+                            <div class="file-item">
+                                <div class="file-icon excel">
+                                    <i class="fas fa-file-excel"></i>
+                                </div>
+                                <div class="file-name">Comptabilite_Mars.xlsx</div>
+                                <div class="file-meta">856 KB • 20/03/2024</div>
+                            </div>
+                            <div class="file-item selected">
+                                <div class="file-icon word">
+                                    <i class="fas fa-file-word"></i>
+                                </div>
+                                <div class="file-name">Contrat_Service.docx</div>
+                                <div class="file-meta">124 KB • 18/03/2024</div>
+                            </div>
+                            <div class="file-item">
+                                <div class="file-icon image">
+                                    <i class="fas fa-file-image"></i>
+                                </div>
+                                <div class="file-name">ICE_Certificate.jpg</div>
+                                <div class="file-meta">3.1 MB • 10/03/2024</div>
+                            </div>
+                            <div class="file-item">
+                                <div class="file-icon pdf">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+                                <div class="file-name">TVA_Fevrier_2024.pdf</div>
+                                <div class="file-meta">1.8 MB • 05/03/2024</div>
+                            </div>
+                            <div class="file-item">
+                                <div class="file-icon excel">
+                                    <i class="fas fa-file-excel"></i>
+                                </div>
+                                <div class="file-name">Budget_Previsionnel.xlsx</div>
+                                <div class="file-meta">645 KB • 28/02/2024</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showModule(moduleType) {
+            const moduleMap = {
+                'archivage': '6.1 Archivage Numérique',
+                'ocr': '6.2 OCR Intelligent',
+                'recherche': '6.3 Recherche Avancée',
+                'workflow': '6.4 Workflow Validation'
+            };
+            
+            alert(`Ouverture du module: ${moduleMap[moduleType]}\n\nFonctionnalité à implémenter selon les spécifications détaillées.`);
+        }
+
+        function uploadDocument() {
+            alert('Téléchargement de document\n\n• Sélection fichiers\n• Classification automatique\n• Extraction métadonnées\n• Archivage sécurisé');
+        }
+
+        function scanDocument() {
+            alert('Scanner de documents\n\n• Interface scanner\n• Prévisualisation\n• OCR automatique\n• Archivage direct');
+        }
+
+        function ocrProcessing() {
+            alert('Traitement OCR intelligent\n\n• Reconnaissance texte IA\n• Extraction données\n• Validation automatique\n• Export structuré');
+        }
+
+        function massImport() {
+            alert('Import en masse\n\n• Sélection multiple\n• Traitement batch\n• Classification IA\n• Rapport de traitement');
+        }
+
+        // Drag & Drop functionality
+        const dropZone = document.getElementById('dropZone');
+
+        dropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+        });
+
+        dropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            alert(`${files.length} fichier(s) déposé(s)!\n\nTraitement en cours:\n• Upload sécurisé\n• Classification IA\n• OCR automatique\n• Archivage`);
+        });
+
+        dropZone.addEventListener('click', function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            input.accept = '.pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png';
+            
+            input.onchange = function(e) {
+                const files = e.target.files;
+                if (files.length > 0) {
+                    alert(`${files.length} fichier(s) sélectionné(s)!\n\nTraitement en cours...`);
+                }
+            };
+            
+            input.click();
+        });
+
+        // File selection
+        document.querySelectorAll('.file-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Remove selection from others
+                document.querySelectorAll('.file-item').forEach(f => f.classList.remove('selected'));
+                // Add selection to current
+                this.classList.add('selected');
+            });
+            
+            // Double click to open
+            item.addEventListener('dblclick', function() {
+                const fileName = this.querySelector('.file-name').textContent;
+                alert(`Ouverture du document: ${fileName}\n\n• Prévisualisation\n• Téléchargement\n• Modification\n• Partage`);
+            });
+        });
+
+        // Folder tree navigation
+        document.querySelectorAll('.tree-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.tree-item').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Simulate folder content loading
+                const folderName = this.querySelector('span').textContent;
+                console.log(`Navigation vers: ${folderName}`);
+            });
+        });
+
+        // Animation des cartes KPI
+        document.querySelectorAll('.kpi-card').forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.6s ease';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100);
+            }, index * 100);
+        });
+
+        // Simulation de mise à jour en temps réel
+        setInterval(() => {
+            const docCount = document.querySelector('.kpi-value');
+            if (docCount && Math.random() > 0.95) {
+                const currentValue = parseInt(docCount.textContent.replace(',', ''));
+                docCount.textContent = (currentValue + 1).toLocaleString();
+                docCount.style.color = 'var(--accent-color)';
+                setTimeout(() => {
+                    docCount.style.color = '';
+                }, 1000);
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
