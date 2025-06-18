@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Tâches & Projets - Cabinet Comptable Expert</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2c5aa0;
+            --secondary-color: #f8f9fa;
+            --accent-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --dark-color: #343a40;
+            --light-color: #ffffff;
+            --border-color: #dee2e6;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --shadow-hover: 0 5px 20px rgba(0,0,0,0.15);
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark-color);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-hover);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--gradient);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        /* KPIs Tâches */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .kpi-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .kpi-trend {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        /* Modules */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .module-header {
+            background: var(--gradient);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .module-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .module-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .module-subtitle {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .module-content {
+            padding: 1.5rem;
+        }
+
+        .module-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .module-features li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .module-features li i {
+            color: var(--accent-color);
+            width: 16px;
+        }
+
+        .module-stats {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Kanban Board */
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kanban-column {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .kanban-header {
+            background: var(--gradient);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .kanban-tasks {
+            padding: 1rem;
+            min-height: 300px;
+        }
+
+        .task-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .task-card:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow);
+        }
+
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .task-client {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .task-priority {
+            padding: 0.2rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .priority-haute {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .priority-normale {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .priority-basse {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .priority-urgente {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* Actions rapides */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quick-action {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+
+        .quick-action:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            color: var(--primary-color);
+        }
+
+        .action-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .action-text {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* Gantt Chart */
+        .gantt-chart {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .kanban-board {
+                grid-template-columns: 1fr;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-tasks"></i> Gestion des Tâches & Projets</h1>
+            <p>Planification intelligente et suivi de performance en temps réel</p>
+        </div>
+
+        <div class="content">
+            <!-- KPIs Tâches -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--primary-color);">
+                        <i class="fas fa-list-check"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--primary-color);">324</div>
+                    <div class="kpi-label">Tâches Actives</div>
+                    <div class="kpi-trend" style="color: var(--accent-color);">
+                        +12 cette semaine
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--warning-color);">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--warning-color);">18</div>
+                    <div class="kpi-label">En Retard</div>
+                    <div class="kpi-trend" style="color: var(--danger-color);">
+                        Priorité haute
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--accent-color);">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--accent-color);">1,847h</div>
+                    <div class="kpi-label">Temps Facturé</div>
+                    <div class="kpi-trend" style="color: var(--accent-color);">
+                        +8% vs mois dernier
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--info-color);">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--info-color);">87%</div>
+                    <div class="kpi-label">Taux Réalisation</div>
+                    <div class="kpi-trend" style="color: var(--accent-color);">
+                        Objectif: 85%
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--primary-color);">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--primary-color);">12</div>
+                    <div class="kpi-label">Équipes Actives</div>
+                    <div class="kpi-trend" style="color: var(--info-color);">
+                        32 collaborateurs
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions rapides -->
+            <div class="quick-actions">
+                <a href="#" class="quick-action" onclick="newTask()">
+                    <div class="action-icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <div class="action-text">Nouvelle Tâche</div>
+                </a>
+                <a href="#" class="quick-action" onclick="newProject()">
+                    <div class="action-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <div class="action-text">Nouveau Projet</div>
+                </a>
+                <a href="#" class="quick-action" onclick="timeEntry()">
+                    <div class="action-icon">
+                        <i class="fas fa-stopwatch"></i>
+                    </div>
+                    <div class="action-text">Saisir Temps</div>
+                </a>
+                <a href="#" class="quick-action" onclick="teamPlanning()">
+                    <div class="action-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="action-text">Planning Équipe</div>
+                </a>
+            </div>
+
+            <!-- Sous-modules -->
+            <div class="modules-grid">
+                <!-- Module 4.1 - Planification & Assignation -->
+                <div class="module-card" onclick="showModule('planification')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="module-title">4.1 Planification & Assignation</div>
+                        <div class="module-subtitle">IA Optimisée</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Planification automatique IA</li>
+                            <li><i class="fas fa-check"></i> Assignation intelligente</li>
+                            <li><i class="fas fa-check"></i> Optimisation des charges</li>
+                            <li><i class="fas fa-check"></i> Calendrier unifié</li>
+                            <li><i class="fas fa-check"></i> Alertes proactives</li>
+                            <li><i class="fas fa-check"></i> Gestion des conflits</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Tâches planifiées:</span>
+                                <span class="stat-value">156</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Optimisation:</span>
+                                <span class="stat-value">92%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Conflits résolus:</span>
+                                <span class="stat-value">8</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 4.2 - Suivi de Performance -->
+                <div class="module-card" onclick="showModule('performance')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="module-title">4.2 Suivi de Performance</div>
+                        <div class="module-subtitle">Analytics Avancés</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Métriques temps réel</li>
+                            <li><i class="fas fa-check"></i> KPIs personnalisés</li>
+                            <li><i class="fas fa-check"></i> Tableaux de bord</li>
+                            <li><i class="fas fa-check"></i> Analyse prédictive</li>
+                            <li><i class="fas fa-check"></i> Rapports automatisés</li>
+                            <li><i class="fas fa-check"></i> Benchmarking équipes</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Productivité:</span>
+                                <span class="stat-value">+15%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Respect délais:</span>
+                                <span class="stat-value">87%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Rentabilité:</span>
+                                <span class="stat-value">€245/h</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 4.3 - Collaboration Avancée -->
+                <div class="module-card" onclick="showModule('collaboration')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-users-cog"></i>
+                        </div>
+                        <div class="module-title">4.3 Collaboration Avancée</div>
+                        <div class="module-subtitle">Travail d'équipe</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Workspaces partagés</li>
+                            <li><i class="fas fa-check"></i> Chat intégré temps réel</li>
+                            <li><i class="fas fa-check"></i> Partage de documents</li>
+                            <li><i class="fas fa-check"></i> Workflow collaboratif</li>
+                            <li><i class="fas fa-check"></i> Annotations et commentaires</li>
+                            <li><i class="fas fa-check"></i> Historique des échanges</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Messages échangés:</span>
+                                <span class="stat-value">2,847</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Docs partagés:</span>
+                                <span class="stat-value">456</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Temps de réponse:</span>
+                                <span class="stat-value">12 min</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 4.4 - Facturation Temps -->
+                <div class="module-card" onclick="showModule('facturation-temps')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-stopwatch"></i>
+                        </div>
+                        <div class="module-title">4.4 Facturation Temps</div>
+                        <div class="module-subtitle">Timesheet intelligent</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Saisie temps automatique</li>
+                            <li><i class="fas fa-check"></i> Détection activités IA</li>
+                            <li><i class="fas fa-check"></i> Validation temps managers</li>
+                            <li><i class="fas fa-check"></i> Facturation automatique</li>
+                            <li><i class="fas fa-check"></i> Taux variables par projet</li>
+                            <li><i class="fas fa-check"></i> Analyse rentabilité</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Heures saisies:</span>
+                                <span class="stat-value">1,847</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Facturable:</span>
+                                <span class="stat-value">94%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>CA généré:</span>
+                                <span class="stat-value">€125K</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kanban Board -->
+            <div class="kanban-board">
+                <div class="kanban-column">
+                    <div class="kanban-header">
+                        <i class="fas fa-hourglass-start"></i> À Faire (24)
+                    </div>
+                    <div class="kanban-tasks">
+                        <div class="task-card">
+                            <div class="task-title">Déclaration TVA Mars</div>
+                            <div class="task-client">ATLAS TRADING SARL</div>
+                            <div class="task-meta">
+                                <span>20/04/2024</span>
+                                <span class="task-priority priority-haute">Haute</span>
+                            </div>
+                        </div>
+                        <div class="task-card">
+                            <div class="task-title">Révision comptable Q1</div>
+                            <div class="task-client">RIAD CONSULTING</div>
+                            <div class="task-meta">
+                                <span>25/04/2024</span>
+                                <span class="task-priority priority-normale">Normale</span>
+                            </div>
+                        </div>
+                        <div class="task-card">
+                            <div class="task-title">Paie Avril</div>
+                            <div class="task-client">GREEN ENERGY</div>
+                            <div class="task-meta">
+                                <span>30/04/2024</span>
+                                <span class="task-priority priority-urgente">Urgente</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kanban-column">
+                    <div class="kanban-header">
+                        <i class="fas fa-cog"></i> En Cours (18)
+                    </div>
+                    <div class="kanban-tasks">
+                        <div class="task-card">
+                            <div class="task-title">Audit social</div>
+                            <div class="task-client">MEDINA TECH</div>
+                            <div class="task-meta">
+                                <span>15/04/2024</span>
+                                <span class="task-priority priority-haute">Haute</span>
+                            </div>
+                        </div>
+                        <div class="task-card">
+                            <div class="task-title">Bilan annuel 2023</div>
+                            <div class="task-client">AUTO SERVICES</div>
+                            <div class="task-meta">
+                                <span>22/04/2024</span>
+                                <span class="task-priority priority-normale">Normale</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kanban-column">
+                    <div class="kanban-header">
+                        <i class="fas fa-eye"></i> En Révision (8)
+                    </div>
+                    <div class="kanban-tasks">
+                        <div class="task-card">
+                            <div class="task-title">États financiers</div>
+                            <div class="task-client">MOROCCO TECH</div>
+                            <div class="task-meta">
+                                <span>18/04/2024</span>
+                                <span class="task-priority priority-normale">Normale</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kanban-column">
+                    <div class="kanban-header">
+                        <i class="fas fa-check-circle"></i> Terminées (145)
+                    </div>
+                    <div class="kanban-tasks">
+                        <div class="task-card">
+                            <div class="task-title">CNSS Février</div>
+                            <div class="task-client">ATLAS TRADING</div>
+                            <div class="task-meta">
+                                <span>Terminé</span>
+                                <span class="task-priority priority-basse">Basse</span>
+                            </div>
+                        </div>
+                        <div class="task-card">
+                            <div class="task-title">Conseil fiscal</div>
+                            <div class="task-client">RIAD CONSULTING</div>
+                            <div class="task-meta">
+                                <span>Terminé</span>
+                                <span class="task-priority priority-normale">Normale</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Graphique Gantt -->
+            <div class="gantt-chart">
+                <div class="chart-title">
+                    <i class="fas fa-project-diagram"></i> Planning Projets - Vue Gantt
+                </div>
+                <div class="chart-placeholder">
+                    <div>
+                        <i class="fas fa-project-diagram" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                        <div>Diagramme de Gantt interactif</div>
+                        <div style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.7;">
+                            Timeline projets, dépendances, ressources
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showModule(moduleType) {
+            const moduleMap = {
+                'planification': '4.1 Planification & Assignation',
+                'performance': '4.2 Suivi de Performance',
+                'collaboration': '4.3 Collaboration Avancée',
+                'facturation-temps': '4.4 Facturation Temps'
+            };
+            
+            alert(`Ouverture du module: ${moduleMap[moduleType]}\n\nFonctionnalité à implémenter selon les spécifications détaillées.`);
+        }
+
+        function newTask() {
+            alert('Création nouvelle tâche\n\n• Titre et description\n• Client et projet\n• Assignation équipe\n• Planification automatique');
+        }
+
+        function newProject() {
+            alert('Nouveau projet\n\n• Structure WBS\n• Équipe projet\n• Budget et planning\n• Livrables');
+        }
+
+        function timeEntry() {
+            alert('Saisie de temps\n\n• Timer automatique\n• Imputation tâches\n• Validation manager\n• Facturation');
+        }
+
+        function teamPlanning() {
+            alert('Planning équipe\n\n• Vue calendrier\n• Charges de travail\n• Disponibilités\n• Optimisation IA');
+        }
+
+        // Drag & Drop Kanban (simulation)
+        document.querySelectorAll('.task-card').forEach(card => {
+            card.addEventListener('dragstart', function(e) {
+                e.dataTransfer.setData('text/plain', this.innerHTML);
+            });
+            
+            card.draggable = true;
+        });
+
+        document.querySelectorAll('.kanban-tasks').forEach(column => {
+            column.addEventListener('dragover', function(e) {
+                e.preventDefault();
+            });
+            
+            column.addEventListener('drop', function(e) {
+                e.preventDefault();
+                // Animation de drop
+                this.style.background = '#e8f5e8';
+                setTimeout(() => {
+                    this.style.background = '';
+                }, 500);
+            });
+        });
+
+        // Animation des cartes KPI
+        document.querySelectorAll('.kpi-card').forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.6s ease';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100);
+            }, index * 100);
+        });
+    </script>
+</body>
+</html>
