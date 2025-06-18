@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facturation & Recouvrement - Cabinet Comptable Expert</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2c5aa0;
+            --secondary-color: #f8f9fa;
+            --accent-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --dark-color: #343a40;
+            --light-color: #ffffff;
+            --border-color: #dee2e6;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --shadow-hover: 0 5px 20px rgba(0,0,0,0.15);
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark-color);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-hover);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--gradient);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        /* KPIs Facturation */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .kpi-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .kpi-trend {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        /* Modules */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .module-header {
+            background: var(--gradient);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .module-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .module-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .module-subtitle {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .module-content {
+            padding: 1.5rem;
+        }
+
+        .module-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .module-features li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .module-features li i {
+            color: var(--accent-color);
+            width: 16px;
+        }
+
+        .module-stats {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Factures récentes */
+        .recent-invoices {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .table-header {
+            background: var(--gradient);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-outline-white {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-success {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-payee {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-envoyee {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-retard {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-brouillon {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: #333;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        /* Graphique recouvrement */
+        .recouvrement-chart {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        /* Actions rapides */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quick-action {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+
+        .quick-action:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            color: var(--primary-color);
+        }
+
+        .action-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .action-text {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-file-invoice-dollar"></i> Facturation & Recouvrement</h1>
+            <p>Gestion complète du cycle de facturation et recouvrement intelligent</p>
+        </div>
+
+        <div class="content">
+            <!-- KPIs Facturation -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--accent-color);">
+                        <i class="fas fa-euro-sign"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--accent-color);">2.4M MAD</div>
+                    <div class="kpi-label">CA Facturé 2024</div>
+                    <div class="kpi-trend" style="color: var(--accent-color);">
+                        <i class="fas fa-arrow-up"></i> +18% vs 2023
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--primary-color);">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--primary-color);">156</div>
+                    <div class="kpi-label">Factures Émises</div>
+                    <div class="kpi-trend" style="color: var(--accent-color);">
+                        +12 ce mois
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--warning-color);">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--warning-color);">23</div>
+                    <div class="kpi-label">En Retard</div>
+                    <div class="kpi-trend" style="color: var(--danger-color);">
+                        285K MAD impayés
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--info-color);">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--info-color);">94%</div>
+                    <div class="kpi-label">Taux Recouvrement</div>
+                    <div class="kpi-trend" style="color: var(--accent-color);">
+                        +2% vs moyenne
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="color: var(--primary-color);">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="kpi-value" style="color: var(--primary-color);">28 jours</div>
+                    <div class="kpi-label">DSO Moyen</div>
+                    <div class="kpi-trend" style="color: var(--accent-color);">
+                        -2 jours
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions rapides -->
+            <div class="quick-actions">
+                <a href="#" class="quick-action" onclick="newInvoice()">
+                    <div class="action-icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <div class="action-text">Nouvelle Facture</div>
+                </a>
+                <a href="#" class="quick-action" onclick="bulkReminder()">
+                    <div class="action-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="action-text">Relances en Lot</div>
+                </a>
+                <a href="#" class="quick-action" onclick="paymentEntry()">
+                    <div class="action-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div class="action-text">Saisir Paiement</div>
+                </a>
+                <a href="#" class="quick-action" onclick="exportInvoices()">
+                    <div class="action-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <div class="action-text">Export Factures</div>
+                </a>
+            </div>
+
+            <!-- Sous-modules -->
+            <div class="modules-grid">
+                <!-- Module 3.1 - Création de Factures -->
+                <div class="module-card" onclick="showModule('creation')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <div class="module-title">3.1 Création de Factures</div>
+                        <div class="module-subtitle">Générateur intelligent</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Générateur intelligent</li>
+                            <li><i class="fas fa-check"></i> Templates personnalisables</li>
+                            <li><i class="fas fa-check"></i> Calculs automatiques HT/TVA/TTC</li>
+                            <li><i class="fas fa-check"></i> Numérotation automatique</li>
+                            <li><i class="fas fa-check"></i> Lignes prédéfinies</li>
+                            <li><i class="fas fa-check"></i> Facturation récurrente</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Factures ce mois:</span>
+                                <span class="stat-value">24</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Montant moyen:</span>
+                                <span class="stat-value">15.4K MAD</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Temps de création:</span>
+                                <span class="stat-value">3 min</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 3.2 - Gestion des Factures -->
+                <div class="module-card" onclick="showModule('gestion')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-list-alt"></i>
+                        </div>
+                        <div class="module-title">3.2 Gestion des Factures</div>
+                        <div class="module-subtitle">Workflow complet</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Workflow validation</li>
+                            <li><i class="fas fa-check"></i> Envoi automatique par email</li>
+                            <li><i class="fas fa-check"></i> Suivi statuts temps réel</li>
+                            <li><i class="fas fa-check"></i> Factures d'avoir automatiques</li>
+                            <li><i class="fas fa-check"></i> Factures de situation</li>
+                            <li><i class="fas fa-check"></i> Archivage électronique</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>En brouillon:</span>
+                                <span class="stat-value">8</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Envoyées:</span>
+                                <span class="stat-value">23</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Payées:</span>
+                                <span class="stat-value">125</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 3.3 - Recouvrement Intelligent -->
+                <div class="module-card" onclick="showModule('recouvrement')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="module-title">3.3 Recouvrement Intelligent</div>
+                        <div class="module-subtitle">IA & Automatisation</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Relances automatisées multi-niveaux</li>
+                            <li><i class="fas fa-check"></i> Scénarios personnalisés</li>
+                            <li><i class="fas fa-check"></i> Lettres de mise en demeure</li>
+                            <li><i class="fas fa-check"></i> Suivi contentieux</li>
+                            <li><i class="fas fa-check"></i> Négociation échéanciers</li>
+                            <li><i class="fas fa-check"></i> Provisions créances douteuses</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Relances envoyées:</span>
+                                <span class="stat-value">145</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Taux de succès:</span>
+                                <span class="stat-value">76%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Gain de temps:</span>
+                                <span class="stat-value">85%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 3.4 - Encaissements & Comptabilisation -->
+                <div class="module-card" onclick="showModule('encaissements')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <div class="module-title">3.4 Encaissements & Comptabilisation</div>
+                        <div class="module-subtitle">Automatisation bancaire</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Saisie paiements multiple</li>
+                            <li><i class="fas fa-check"></i> Rapprochement bancaire auto</li>
+                            <li><i class="fas fa-check"></i> Lettrage automatique</li>
+                            <li><i class="fas fa-check"></i> Gestion multi-devises</li>
+                            <li><i class="fas fa-check"></i> Frais bancaires intégrés</li>
+                            <li><i class="fas fa-check"></i> Tableaux de bord</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Paiements ce mois:</span>
+                                <span class="stat-value">89</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Auto-lettrés:</span>
+                                <span class="stat-value">92%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Écarts bancaires:</span>
+                                <span class="stat-value">2</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Graphique Recouvrement -->
+            <div class="recouvrement-chart">
+                <div class="chart-title">
+                    <i class="fas fa-chart-area"></i> Évolution du Recouvrement
+                </div>
+                <div class="chart-placeholder">
+                    <div>
+                        <i class="fas fa-chart-area" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                        <div>Graphique évolution recouvrement mensuel</div>
+                        <div style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.7;">
+                            Taux recouvrement, délais moyens, impayés
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Factures récentes -->
+            <div class="recent-invoices">
+                <div class="table-header">
+                    <div class="table-title">Factures Récentes</div>
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn btn-success">
+                            <i class="fas fa-plus"></i>
+                            Nouvelle Facture
+                        </button>
+                        <button class="btn btn-outline-white">
+                            <i class="fas fa-filter"></i>
+                            Filtrer
+                        </button>
+                    </div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Numéro</th>
+                            <th>Client</th>
+                            <th>Date</th>
+                            <th>Montant TTC</th>
+                            <th>Échéance</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>F-2024-0156</strong></td>
+                            <td>
+                                <div>
+                                    <strong>ATLAS TRADING SARL</strong>
+                                    <br><small style="color: #666;">Tenue comptabilité</small>
+                                </div>
+                            </td>
+                            <td>15/03/2024</td>
+                            <td><strong>2,400 MAD</strong></td>
+                            <td>14/04/2024</td>
+                            <td><span class="status-badge status-payee">Payée</span></td>
+                            <td>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-warning btn-sm">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>F-2024-0157</strong></td>
+                            <td>
+                                <div>
+                                    <strong>RIAD CONSULTING</strong>
+                                    <br><small style="color: #666;">Conseil fiscal</small>
+                                </div>
+                            </td>
+                            <td>18/03/2024</td>
+                            <td><strong>6,000 MAD</strong></td>
+                            <td>17/04/2024</td>
+                            <td><span class="status-badge status-envoyee">Envoyée</span></td>
+                            <td>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-warning btn-sm">
+                                    <i class="fas fa-bell"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>F-2024-0158</strong></td>
+                            <td>
+                                <div>
+                                    <strong>MEDINA TECH SARL</strong>
+                                    <br><small style="color: #666;">Audit annuel</small>
+                                </div>
+                            </td>
+                            <td>20/03/2024</td>
+                            <td><strong>9,600 MAD</strong></td>
+                            <td>05/04/2024</td>
+                            <td><span class="status-badge status-retard">En retard</span></td>
+                            <td>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-danger btn-sm">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>F-2024-0159</strong></td>
+                            <td>
+                                <div>
+                                    <strong>GREEN ENERGY MOROCCO</strong>
+                                    <br><small style="color: #666;">Déclarations fiscales</small>
+                                </div>
+                            </td>
+                            <td>22/03/2024</td>
+                            <td><strong>3,200 MAD</strong></td>
+                            <td>21/04/2024</td>
+                            <td><span class="status-badge status-envoyee">Envoyée</span></td>
+                            <td>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-warning btn-sm">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>F-2024-0160</strong></td>
+                            <td>
+                                <div>
+                                    <strong>AUTO SERVICES PLUS</strong>
+                                    <br><small style="color: #666;">Paie mensuelle</small>
+                                </div>
+                            </td>
+                            <td>25/03/2024</td>
+                            <td><strong>1,800 MAD</strong></td>
+                            <td>24/04/2024</td>
+                            <td><span class="status-badge status-brouillon">Brouillon</span></td>
+                            <td>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-warning btn-sm">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showModule(moduleType) {
+            const moduleMap = {
+                'creation': '3.1 Création de Factures',
+                'gestion': '3.2 Gestion des Factures', 
+                'recouvrement': '3.3 Recouvrement Intelligent',
+                'encaissements': '3.4 Encaissements & Comptabilisation'
+            };
+            
+            alert(`Ouverture du module: ${moduleMap[moduleType]}\n\nFonctionnalité à implémenter selon les spécifications détaillées.`);
+        }
+
+        function newInvoice() {
+            alert('Ouverture du générateur de factures\n\n• Sélection client\n• Lignes de facturation\n• Calculs automatiques\n• Prévisualisation PDF');
+        }
+
+        function bulkReminder() {
+            alert('Relances en lot\n\n• Sélection factures en retard\n• Templates de relance\n• Envoi automatique\n• Suivi des réponses');
+        }
+
+        function paymentEntry() {
+            alert('Saisie de paiement\n\n• Sélection facture\n• Mode de paiement\n• Rapprochement bancaire\n• Lettrage automatique');
+        }
+
+        function exportInvoices() {
+            alert('Export des factures\n\n• Sélection période\n• Format (Excel, PDF, CSV)\n• Filtres personnalisés\n• Téléchargement');
+        }
+
+        // Animation au survol des cartes
+        document.querySelectorAll('.module-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Animation des KPIs
+        document.querySelectorAll('.kpi-card').forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.6s ease';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100);
+            }, index * 100);
+        });
+
+        // Simulation de mise à jour temps réel des KPIs
+        setInterval(() => {
+            const randomKpi = Math.floor(Math.random() * 5);
+            const kpiCards = document.querySelectorAll('.kpi-value');
+            
+            if (kpiCards[randomKpi]) {
+                kpiCards[randomKpi].style.transform = 'scale(1.1)';
+                kpiCards[randomKpi].style.color = 'var(--accent-color)';
+                
+                setTimeout(() => {
+                    kpiCards[randomKpi].style.transform = 'scale(1)';
+                    kpiCards[randomKpi].style.color = '';
+                }, 500);
+            }
+        }, 10000);
+    </script>
+</body>
+</html>
