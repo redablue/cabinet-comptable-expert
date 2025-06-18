@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - Cabinet Comptable Expert</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2c5aa0;
+            --secondary-color: #f8f9fa;
+            --accent-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --dark-color: #343a40;
+            --light-color: #ffffff;
+            --border-color: #dee2e6;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --shadow-hover: 0 5px 20px rgba(0,0,0,0.15);
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark-color);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-hover);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--gradient);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .kpi-icon {
+            font-size: 2rem;
+            opacity: 0.7;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .kpi-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .trend-up {
+            color: var(--accent-color);
+        }
+
+        .trend-down {
+            color: var(--danger-color);
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quick-action {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .quick-action:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            color: var(--primary-color);
+        }
+
+        .action-icon {
+            font-size: 2rem;
+            opacity: 0.8;
+        }
+
+        .action-text {
+            font-weight: 500;
+        }
+
+        /* Recent Activity */
+        .recent-activity {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .activity-header {
+            background: var(--gradient);
+            color: white;
+            padding: 1.5rem;
+        }
+
+        .activity-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .activity-icon.success {
+            background: var(--accent-color);
+        }
+
+        .activity-icon.warning {
+            background: var(--warning-color);
+        }
+
+        .activity-icon.info {
+            background: var(--info-color);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-desc {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        /* Weather Fiscal */
+        .fiscal-weather {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .weather-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .weather-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .weather-item {
+            padding: 1rem;
+            border-left: 4px solid var(--info-color);
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .weather-item.urgent {
+            border-left-color: var(--danger-color);
+            background: #fff5f5;
+        }
+
+        .weather-item.warning {
+            border-left-color: var(--warning-color);
+            background: #fffbf0;
+        }
+
+        .weather-date {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .weather-desc {
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-tachometer-alt"></i> Tableau de Bord</h1>
+            <p>Vue d'ensemble temps réel - Cabinet Comptable Expert</p>
+        </div>
+
+        <div class="content">
+            <!-- KPIs principaux -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon" style="color: var(--primary-color);">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-value">147</div>
+                    <div class="kpi-label">Clients Actifs</div>
+                    <div class="kpi-trend trend-up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+12% ce mois</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon" style="color: var(--accent-color);">
+                            <i class="fas fa-euro-sign"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-value">2.4M MAD</div>
+                    <div class="kpi-label">CA Annuel</div>
+                    <div class="kpi-trend trend-up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+18.5% vs 2023</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon" style="color: var(--warning-color);">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-value">23</div>
+                    <div class="kpi-label">Factures en Retard</div>
+                    <div class="kpi-trend trend-down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>-5 cette semaine</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon" style="color: var(--danger-color);">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-value">18</div>
+                    <div class="kpi-label">Tâches Urgentes</div>
+                    <div class="kpi-trend trend-up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+3 aujourd'hui</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon" style="color: var(--info-color);">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-value">94%</div>
+                    <div class="kpi-label">Taux Recouvrement</div>
+                    <div class="kpi-trend trend-up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+2% vs moyenne</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon" style="color: var(--primary-color);">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-value">28 jours</div>
+                    <div class="kpi-label">DSO Moyen</div>
+                    <div class="kpi-trend trend-down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>-2 jours</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions Rapides -->
+            <div class="quick-actions">
+                <a href="#" class="quick-action">
+                    <div class="action-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="action-text">Nouveau Client</div>
+                </a>
+                <a href="#" class="quick-action">
+                    <div class="action-icon">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <div class="action-text">Nouvelle Facture</div>
+                </a>
+                <a href="#" class="quick-action">
+                    <div class="action-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <div class="action-text">Nouvelle Tâche</div>
+                </a>
+                <a href="#" class="quick-action">
+                    <div class="action-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="action-text">Obligations Fiscales</div>
+                </a>
+            </div>
+
+            <!-- Météo Fiscale -->
+            <div class="fiscal-weather">
+                <div class="weather-title">
+                    <i class="fas fa-cloud-sun"></i>
+                    Météo Fiscale - Prochaines Échéances
+                </div>
+                <div class="weather-items">
+                    <div class="weather-item urgent">
+                        <div class="weather-date">Aujourd'hui - 20/04/2024</div>
+                        <div class="weather-desc">Déclaration TVA mensuelle (5 clients concernés)</div>
+                    </div>
+                    <div class="weather-item warning">
+                        <div class="weather-date">Demain - 21/04/2024</div>
+                        <div class="weather-desc">Bordereau CNSS (12 clients)</div>
+                    </div>
+                    <div class="weather-item">
+                        <div class="weather-date">30/04/2024</div>
+                        <div class="weather-desc">Acompte IS T1 (18 clients SARL)</div>
+                    </div>
+                    <div class="weather-item">
+                        <div class="weather-date">31/05/2024</div>
+                        <div class="weather-desc">Déclaration annuelle IS 2023</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Graphiques -->
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <div class="chart-title">Évolution du Chiffre d'Affaires</div>
+                    <div class="chart-placeholder">
+                        <div style="text-align: center;">
+                            <i class="fas fa-chart-line" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                            <div>Graphique CA mensuel avec tendances</div>
+                            <div style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.7;">
+                                (Intégration Chart.js / D3.js)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">Répartition par Secteur</div>
+                    <div class="chart-placeholder">
+                        <div style="text-align: center;">
+                            <i class="fas fa-chart-pie" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                            <div>Graphique secteurs d'activité</div>
+                            <div style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.7;">
+                                Import-Export: 35%<br>
+                                Services: 24%<br>
+                                IT: 19%<br>
+                                Industrie: 22%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activité récente -->
+            <div class="recent-activity">
+                <div class="activity-header">
+                    <h3><i class="fas fa-history"></i> Activité Récente</h3>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon success">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Facture F-2024-0156 payée</div>
+                        <div class="activity-desc">ATLAS TRADING SARL - 2,400 MAD encaissés</div>
+                    </div>
+                    <div class="activity-time">Il y a 15 min</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon info">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Nouveau client créé</div>
+                        <div class="activity-desc">TECHNO SOLUTIONS SARL - Secteur IT</div>
+                    </div>
+                    <div class="activity-time">Il y a 1h</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Facture en retard détectée</div>
+                        <div class="activity-desc">RIAD CONSULTING - F-2024-0134 (15 jours de retard)</div>
+                    </div>
+                    <div class="activity-time">Il y a 2h</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon success">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Déclaration TVA soumise</div>
+                        <div class="activity-desc">GREEN ENERGY MOROCCO - Mars 2024</div>
+                    </div>
+                    <div class="activity-time">Il y a 3h</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon info">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Tâche assignée</div>
+                        <div class="activity-desc">Audit social MEDINA TECH - Assigné à Sarah Bennani</div>
+                    </div>
+                    <div class="activity-time">Il y a 4h</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
