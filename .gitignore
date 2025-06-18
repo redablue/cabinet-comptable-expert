@@ -1,0 +1,407 @@
+# ================================================================
+# CABINET COMPTABLE EXPERT - Git Ignore
+# ================================================================
+
+# ================================================================
+# ENVIRONNEMENT & CONFIGURATION
+# ================================================================
+.env
+.env.local
+.env.*.local
+.env.production
+.env.staging
+.env.testing
+
+# Configuration sensible
+config/database.php
+config/mail.php
+storage/oauth-*.key
+
+# ================================================================
+# DÉPENDANCES
+# ================================================================
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# PHP Composer
+vendor/
+composer.phar
+composer.lock
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+
+# ================================================================
+# BUILD & DISTRIBUTION
+# ================================================================
+
+# Build outputs
+dist/
+build/
+public/build/
+public/hot
+public/storage
+storage/app/public
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/views/
+storage/logs/
+
+# Vite
+.vite/
+*.local
+
+# Webpack
+.webpack/
+
+# Next.js
+.next/
+out/
+
+# Nuxt.js
+.nuxt/
+.output/
+
+# ================================================================
+# LOGS & TEMPORAIRES
+# ================================================================
+
+# Logs généraux
+*.log
+logs/
+*.log.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Laravel logs
+storage/logs/*.log
+
+# Fichiers temporaires
+tmp/
+temp/
+.tmp/
+.temp/
+
+# ================================================================
+# BASE DE DONNÉES
+# ================================================================
+
+# Fichiers de base de données locaux
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+
+# Dumps de base de données (sauf structure)
+*.sql.gz
+*-dump.sql
+backup-*.sql
+
+# Sauvegardes automatiques
+storage/backups/
+backups/
+
+# ================================================================
+# UPLOADS & MÉDIAS
+# ================================================================
+
+# Uploads utilisateurs (en développement)
+storage/app/uploads/
+public/uploads/
+uploads/
+
+# Documents clients (sensibles)
+storage/app/documents/
+storage/app/invoices/
+storage/app/contracts/
+
+# Cache d'images
+public/cache/
+storage/app/cache/
+
+# ================================================================
+# IDE & ÉDITEURS
+# ================================================================
+
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains IDEs
+.idea/
+*.swp
+*.swo
+*~
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*.swn
+Session.vim
+.netrwhist
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+
+# ================================================================
+# SYSTÈME D'EXPLOITATION
+# ================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ================================================================
+# SÉCURITÉ & CERTIFICATS
+# ================================================================
+
+# Clés privées
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.cer
+
+# Certificats DGI
+storage/certificates/
+certificates/
+
+# Tokens et secrets
+.secrets
+secrets.json
+*.token
+
+# ================================================================
+# CACHE & PERFORMANCE
+# ================================================================
+
+# Cache général
+.cache/
+*.cache
+.parcel-cache/
+
+# PHP OpCache
+.opcache/
+
+# Redis dumps
+dump.rdb
+
+# Sessions
+storage/framework/sessions/*
+!storage/framework/sessions/.gitignore
+
+# ================================================================
+# TESTS & QUALITÉ CODE
+# ================================================================
+
+# Coverage reports
+coverage/
+*.lcov
+.nyc_output/
+phpunit.xml
+.phpunit.result.cache
+
+# Test databases
+testing.sqlite
+test.db
+
+# Mutation testing
+infection.log
+
+# ================================================================
+# OUTILS DE DÉVELOPPEMENT
+# ================================================================
+
+# Laravel specific
+bootstrap/cache/*.php
+!bootstrap/cache/.gitignore
+
+# Homestead
+Homestead.json
+Homestead.yaml
+.vagrant/
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# ================================================================
+# MONITORING & ANALYTICS
+# ================================================================
+
+# Sentry
+.sentryclirc
+
+# New Relic
+newrelic.ini
+
+# StatsD
+statsd-config.js
+
+# ================================================================
+# CONTENU SPÉCIFIQUE MÉTIER
+# ================================================================
+
+# Documents clients réels
+storage/app/clients/
+storage/app/fiscal/
+storage/app/contracts/
+
+# Rapports générés
+storage/app/reports/
+public/reports/
+
+# Sauvegardes de données sensibles
+*.backup
+*-backup.*
+
+# Export de données
+exports/
+*.export
+
+# ================================================================
+# DÉVELOPPEMENT LOCAL
+# ================================================================
+
+# Configuration locale
+.local
+local/
+dev/
+
+# Scripts de développement personnels
+dev-scripts/
+my-scripts/
+
+# Notes personnelles
+TODO.md
+NOTES.md
+notes.txt
+
+# ================================================================
+# API & INTÉGRATIONS
+# ================================================================
+
+# Clés API (au cas où)
+api-keys.json
+.api-keys
+credentials.json
+
+# OAuth tokens
+.oauth
+oauth-tokens/
+
+# ================================================================
+# ASSETS GÉNÉRÉS
+# ================================================================
+
+# Sprites et assets générés
+public/css/
+public/js/
+public/mix-manifest.json
+
+# Fonts téléchargées
+public/fonts/webfonts/
+
+# ================================================================
+# DOCUMENTATION GÉNÉRÉE
+# ================================================================
+
+# Documentation auto-générée
+docs/api/generated/
+docs/build/
+
+# ================================================================
+# EXCEPTIONS (À GARDER)
+# ================================================================
+
+# Garder certains fichiers importants
+!storage/app/.gitignore
+!storage/app/public/.gitignore
+!storage/framework/.gitignore
+!storage/framework/cache/.gitignore
+!storage/framework/sessions/.gitignore
+!storage/framework/views/.gitignore
+!storage/logs/.gitignore
+
+# Structure de dossiers vides
+!*/
+!.gitkeep
+!.gitignore
+
+# Fichiers de configuration d'exemple
+!.env.example
+!docker-compose.yml.example
+
+# ================================================================
+# NOTES
+# ================================================================
+
+# 1. Ce .gitignore couvre les cas d'usage typiques pour un projet
+#    de gestion comptable avec données sensibles
+# 
+# 2. Ajustez selon votre stack technique spécifique
+#    (React/Vue, Node.js/Laravel, etc.)
+#
+# 3. JAMAIS committer :
+#    - Fichiers .env avec vraies valeurs
+#    - Documents clients réels  
+#    - Clés API et certificats
+#    - Mots de passe et secrets
+#
+# 4. En cas de doute, mieux vaut exclure par sécurité
