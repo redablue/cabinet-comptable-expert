@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Clients - Cabinet Comptable Expert</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2c5aa0;
+            --secondary-color: #f8f9fa;
+            --accent-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --dark-color: #343a40;
+            --light-color: #ffffff;
+            --border-color: #dee2e6;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --shadow-hover: 0 5px 20px rgba(0,0,0,0.15);
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark-color);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-hover);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--gradient);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        /* Sous-modules */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .module-header {
+            background: var(--gradient);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .module-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .module-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .module-subtitle {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .module-content {
+            padding: 1.5rem;
+        }
+
+        .module-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .module-features li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .module-features li i {
+            color: var(--accent-color);
+            width: 16px;
+        }
+
+        .module-stats {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Filtres et recherche */
+        .search-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .filter-select {
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1e3f6f;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        /* Tableau clients */
+        .clients-table-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .table-header {
+            background: var(--gradient);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-outline-white {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .data-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-actif {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-prospect {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-inactif {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        /* Segmentation */
+        .segmentation-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .segment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .segment-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .segment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .segment-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .segment-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .segment-count {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .segment-desc {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .segment-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-users"></i> Gestion des Clients</h1>
+            <p>Gestion complète du portefeuille client - CRM professionnel</p>
+        </div>
+
+        <div class="content">
+            <!-- Sous-modules -->
+            <div class="modules-grid">
+                <!-- Module 2.1 - Liste des Clients -->
+                <div class="module-card" onclick="showModule('liste')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-list"></i>
+                        </div>
+                        <div class="module-title">2.1 Liste des Clients</div>
+                        <div class="module-subtitle">Base de données centralisée</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Recherche multicritères avancée</li>
+                            <li><i class="fas fa-check"></i> Filtres intelligents par secteur</li>
+                            <li><i class="fas fa-check"></i> Export Excel/PDF/CSV</li>
+                            <li><i class="fas fa-check"></i> Actions en lot (emails, statuts)</li>
+                            <li><i class="fas fa-check"></i> Vue liste/carte/kanban</li>
+                            <li><i class="fas fa-check"></i> Impression étiquettes</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Total clients:</span>
+                                <span class="stat-value">147</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Clients actifs:</span>
+                                <span class="stat-value">123</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Nouveaux ce mois:</span>
+                                <span class="stat-value">6</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 2.2 - Fiche Client 360° -->
+                <div class="module-card" onclick="showModule('fiche')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-id-card"></i>
+                        </div>
+                        <div class="module-title">2.2 Fiche Client 360°</div>
+                        <div class="module-subtitle">Profil complet et historique</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Profil complet (légal, financier)</li>
+                            <li><i class="fas fa-check"></i> Historique interactions</li>
+                            <li><i class="fas fa-check"></i> Documents attachés (GED)</li>
+                            <li><i class="fas fa-check"></i> Contrats et engagements</li>
+                            <li><i class="fas fa-check"></i> Facturation intégrée</li>
+                            <li><i class="fas fa-check"></i> Score santé automatique</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Fiches complètes:</span>
+                                <span class="stat-value">98%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Score moyen:</span>
+                                <span class="stat-value">8.7/10</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Conformité ICE:</span>
+                                <span class="stat-value">100%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 2.3 - Prospection & CRM -->
+                <div class="module-card" onclick="showModule('crm')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <div class="module-title">2.3 Prospection & CRM</div>
+                        <div class="module-subtitle">Pipeline commercial</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Pipeline commercial avec étapes</li>
+                            <li><i class="fas fa-check"></i> Suivi opportunités et devis</li>
+                            <li><i class="fas fa-check"></i> Campagnes email ciblées</li>
+                            <li><i class="fas fa-check"></i> Relances automatisées</li>
+                            <li><i class="fas fa-check"></i> Conversion prospect→client</li>
+                            <li><i class="fas fa-check"></i> Analyse sources acquisition</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Prospects actifs:</span>
+                                <span class="stat-value">18</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Taux conversion:</span>
+                                <span class="stat-value">24%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Devis en cours:</span>
+                                <span class="stat-value">8</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 2.4 - Segmentation Avancée -->
+                <div class="module-card" onclick="showModule('segmentation')">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <div class="module-title">2.4 Segmentation Avancée</div>
+                        <div class="module-subtitle">Analyse et catégorisation</div>
+                    </div>
+                    <div class="module-content">
+                        <ul class="module-features">
+                            <li><i class="fas fa-check"></i> Catégorisation par CA/secteur</li>
+                            <li><i class="fas fa-check"></i> Clients VIP prioritaires</li>
+                            <li><i class="fas fa-check"></i> Risques identifiés</li>
+                            <li><i class="fas fa-check"></i> Potentiel développement IA</li>
+                            <li><i class="fas fa-check"></i> Mapping géographique</li>
+                            <li><i class="fas fa-check"></i> Analyses prédictives</li>
+                        </ul>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <span>Clients VIP:</span>
+                                <span class="stat-value">12</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Risque élevé:</span>
+                                <span class="stat-value">3</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Potentiel fort:</span>
+                                <span class="stat-value">28</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Recherche et Filtres -->
+            <div class="search-section">
+                <div class="search-title">
+                    <i class="fas fa-search"></i>
+                    Recherche et Filtres Avancés
+                </div>
+                <div class="search-grid">
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Rechercher par nom, ICE, ville, secteur...">
+                    </div>
+                    <select class="filter-select">
+                        <option value="">Tous les statuts</option>
+                        <option value="prospect">Prospect</option>
+                        <option value="actif">Client actif</option>
+                        <option value="inactif">Client inactif</option>
+                    </select>
+                    <select class="filter-select">
+                        <option value="">Toutes les villes</option>
+                        <option value="casablanca">Casablanca</option>
+                        <option value="rabat">Rabat</option>
+                        <option value="marrakech">Marrakech</option>
+                        <option value="fes">Fès</option>
+                    </select>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-filter"></i>
+                        Filtrer
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tableau des clients -->
+            <div class="clients-table-section">
+                <div class="table-header">
+                    <div class="table-title">Base de Données Clients</div>
+                    <div class="table-actions">
+                        <button class="btn btn-success">
+                            <i class="fas fa-plus"></i>
+                            Nouveau Client
+                        </button>
+                        <button class="btn btn-outline-white">
+                            <i class="fas fa-download"></i>
+                            Exporter
+                        </button>
+                    </div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox"></th>
+                            <th>Code Client</th>
+                            <th>Nom / Raison Sociale</th>
+                            <th>ICE</th>
+                            <th>Ville</th>
+                            <th>Type</th>
+                            <th>CA Annuel</th>
+                            <th>Statut</th>
+                            <th>Comptable</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td><strong>CLI000001</strong></td>
+                            <td>
+                                <div>
+                                    <strong>ATLAS TRADING SARL</strong>
+                                    <br><small style="color: #666;">Import-Export</small>
+                                </div>
+                            </td>
+                            <td>001234567890123</td>
+                            <td>Casablanca</td>
+                            <td>SARL</td>
+                            <td><strong>5,000,000 MAD</strong></td>
+                            <td><span class="status-badge status-actif">Actif</span></td>
+                            <td>Sarah Bennani</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-success btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td><strong>CLI000002</strong></td>
+                            <td>
+                                <div>
+                                    <strong>RIAD CONSULTING</strong>
+                                    <br><small style="color: #666;">Conseil</small>
+                                </div>
+                            </td>
+                            <td>001234567890124</td>
+                            <td>Rabat</td>
+                            <td>SARL</td>
+                            <td><strong>1,200,000 MAD</strong></td>
+                            <td><span class="status-badge status-actif">Actif</span></td>
+                            <td>Sarah Bennani</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-success btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td><strong>CLI000003</strong></td>
+                            <td>
+                                <div>
+                                    <strong>MEDINA TECH SARL</strong>
+                                    <br><small style="color: #666;">Informatique</small>
+                                </div>
+                            </td>
+                            <td>001234567890125</td>
+                            <td>Marrakech</td>
+                            <td>SARL</td>
+                            <td><strong>800,000 MAD</strong></td>
+                            <td><span class="status-badge status-actif">Actif</span></td>
+                            <td>Fatima El Mansouri</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-success btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td><strong>CLI000004</strong></td>
+                            <td>
+                                <div>
+                                    <strong>STARTUP INNOVANTE</strong>
+                                    <br><small style="color: #666;">Fintech</small>
+                                </div>
+                            </td>
+                            <td>001234567890128</td>
+                            <td>Casablanca</td>
+                            <td>SAS</td>
+                            <td><strong>450,000 MAD</strong></td>
+                            <td><span class="status-badge status-prospect">Prospect</span></td>
+                            <td>Mohammed Alami</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-success btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Segmentation -->
+            <div class="segmentation-section">
+                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">
+                    <i class="fas fa-chart-pie"></i> Segmentation du Portefeuille
+                </h2>
+                <div class="segment-grid">
+                    <div class="segment-card">
+                        <div class="segment-icon" style="color: var(--accent-color);">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <div class="segment-title">Clients VIP</div>
+                        <div class="segment-count">12</div>
+                        <div class="segment-desc">CA > 2M MAD</div>
+                    </div>
+                    <div class="segment-card">
+                        <div class="segment-icon" style="color: var(--primary-color);">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="segment-title">PME Actives</div>
+                        <div class="segment-count">89</div>
+                        <div class="segment-desc">CA 500K - 2M MAD</div>
+                    </div>
+                    <div class="segment-card">
+                        <div class="segment-icon" style="color: var(--info-color);">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <div class="segment-title">Startups</div>
+                        <div class="segment-count">22</div>
+                        <div class="segment-desc">CA < 500K MAD</div>
+                    </div>
+                    <div class="segment-card">
+                        <div class="segment-icon" style="color: var(--warning-color);">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="segment-title">Prospects</div>
+                        <div class="segment-count">18</div>
+                        <div class="segment-desc">En négociation</div>
+                    </div>
+                    <div class="segment-card">
+                        <div class="segment-icon" style="color: var(--danger-color);">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="segment-title">Risque Élevé</div>
+                        <div class="segment-count">6</div>
+                        <div class="segment-desc">Surveillance requise</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showModule(moduleType) {
+            alert(`Ouverture du module: ${moduleType}\n\nFonctionnalité à implémenter selon les spécifications détaillées.`);
+        }
+
+        // Gestion des filtres
+        document.querySelector('.btn-primary').addEventListener('click', function() {
+            const searchValue = document.querySelector('.search-input').value;
+            const statusFilter = document.querySelectorAll('.filter-select')[0].value;
+            const cityFilter = document.querySelectorAll('.filter-select')[1].value;
+            
+            console.log('Filtres appliqués:', {
+                search: searchValue,
+                status: statusFilter,
+                city: cityFilter
+            });
+            
+            // Ici, vous implémenterez la logique de filtrage
+            alert('Filtres appliqués avec succès!');
+        });
+
+        // Gestion des cases à cocher
+        document.querySelector('thead input[type="checkbox"]').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+    </script>
+</body>
+</html>
